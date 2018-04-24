@@ -5,8 +5,7 @@ var dburl = 'mongodb://bilicrawlerAdmin:addData2018@ds253889.mlab.com:53889/bili
 var schema = require('./routes/dbModels');
 var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose'),
-    Anime = mongoose.model("Anime"),
-    Author = mongoose.model('Author')
+    Anime = mongoose.model("Anime")
 
 
 mongoose.connect(dburl);
@@ -81,13 +80,15 @@ function doIt(i) {
                         aid: pb['data']['archives'][j]['aid'],  //anime id
                         title: pb['data']['archives'][j]['title'],
                         play: playNum,
+                        coins: pb['data']['archives'][j]['stat']['coin'],
+                        commentsNum: pb['data']['archives'][j]['stat']['reply'],
                         favorites: pb['data']['archives'][j]['stat']['favorite'],
                         danmaku: pb['data']['archives'][j]['video_review'],  //danmu
                         create: pb['data']['archives'][j]['create'], //date posted
                         mid: mid, //pb['data']['archives'][j]['mid'],    //author id
                         pic: pb['data']['archives'][j]['pic']
                     };
-                    console.log("faa "+JSON.stringify(pb));
+                    // console.log(JSON.stringify(toSave));
                     var addOne = new Anime(toSave);
                     addOne.save(function(err){
                         if(err){
@@ -122,73 +123,6 @@ function doIt(i) {
     });
     return p;
 }
-
-// function author_crawler(mid, j){
-//     setTimeout(function() {
-//         request.post({
-//                 url: 'http://space.bilibili.com/ajax/member/GetInfo',
-//                 headers: {
-//                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36',
-//                     'Content-Type': 'application/x-www-form-urlencoded',
-//                     'Referer': 'http://space.bilibili.com/'+mid
-//                 }
-//                 , formData: {'mid': mid, 'csrf': 'f06d59a54b82ea205f409267c7a5ab71'}
-//             }
-//             , function optionalCallback(err, httpResponse, body) {
-//             if (err) {
-//                 // author_crawler(pb, j);
-//                 console.error('213failed:', err.statusCode);
-//             }
-//             var authorData;
-//             try {
-//                 authorData = JSON.parse(body);
-//             }
-//             catch (err) {
-//
-//                 author_crawler(mid, j);
-//                 return;
-//             }
-//
-//
-//             console.log('Upload successful!  Server responded with:', authorData['data']['mid']);
-//
-//             var regtime = authorData['data']['regtime'];
-//             if (regtime === undefined)
-//                 regtime = 0;
-//             var toSaveAuthor = {
-//                 mid: authorData['data']['mid'],  //author id
-//                 name: authorData['data']['name'],  //name
-//                 face: authorData['data']['face'],
-//                 regtime: regtime,
-//                 birthday: authorData['data']['birthday'],
-//                 article: authorData['data']['article'],
-//                 friend: authorData['data']['friend'],
-//                 attention: authorData['data']['attention'],
-//                 fans: authorData['data']['fans'],  //
-//                 playNum: authorData['data']['playNum']
-//             };
-//                 console.log("fag "+JSON.stringify(authorData));
-//                 var addOne = new Author(toSaveAuthor);
-//                 addOne.save(function(err){
-//                     if(err){
-//                         console.log("failed to add author "+JSON.stringify(toSaveAuthor)+err);
-//                        // res.send(err);
-//                     }else{
-//                         // console.log("author add success");
-//                     }
-//                 });
-//                 // console.log("author: "+JSON.stringify(toSaveAuthor));
-//             // toSaveAuthor.save(function (err) {
-//             //     if (err) {
-//             //         console.log(authorData['data']['mid'] + " fail to save author. " + err);
-//             //     }
-//             //     else console.log('author saved successfully!');
-//             // });
-//
-//         }
-//         );
-//     }, 2000*j);
-// }
 
 function crawler_anim() {
     var set_end_pagePromise =  new Promise(function(resolve, reject) {
@@ -240,20 +174,7 @@ function crawler_anim() {
             resolve(num);
         })
 
-    })
-        // .then(function () {
-        //     Promise.all(promiseArr).then(function(res) {
-        //         console.log('3dd '+authorList.length );
-        //         var j=1;
-        //         for (var k in authorList) {
-        //             author_crawler(authorList[k], j);
-        //             // console.log(authorList[k]);
-        //             j++;
-        //
-        //         }
-        //         console.log(j);
-        //     });
-        // });
+    });
 
 }
 
